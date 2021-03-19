@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="accordion" id="TAaccordion">
+    {% for student in g.user.students %}
+        {% for enrolled in student.enrolled_in %}
+        {% if enrolled.course_id == current_course.id %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{student.id}}">
+                    <button 
+                    class="accordion-button" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#collapse{{student.id}}" 
+                    aria-expanded="true" 
+                    aria-controls="collapse{{student.id}}">
+                        {{student.first_name}} {{student.last_name}}
+                    </button>
+                </h2>
+                <div 
+                class="accordion-collapse collapse" 
+                id="collapse{{student.id}}"
+                aria-labelledby="heading{{student.id}}"
+                data-bs-parent="#TAaccordion">
+                    <div class="accordion-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    Outstanding Assignments: 
+                                     
+                                    {{ enrolled.submissions | length }}
+                                </div>
+                            </div>
+                        </div>
+                        <button>go to page</button>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{% endblock %}

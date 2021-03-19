@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <h1 class="display-4">
+                {{enrolled.student.first_name}} {{enrolled.student.last_name}}
+            </h1>
+            <h2 class="h1">
+                Student Page
+            </h2>
+            Email: {{enrolled.student.email}}<br>
+            Phone: {{enrolled.student.phone}}
+        </div>
+        <div class="col-sm">
+            Interactions:
+            <div class="overflow-scroll">
+                <ul>  
+                    {% for interaction in enrolled.interactions %}
+                    <li>
+                        {{interaction.content}}<br>
+                        -{{interaction.poster.first_name}} {{interaction.poster.last_name}}<br>
+                        {{interaction.time_stamp}}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            Assignments:
+            <div class="overflow-scroll">
+                <ul>
+                    {% for submission in enrolled.submissions %}
+                    <li>
+                        Assignment {{submission.assignment_info.num}}:
+                        {{submission.assignment_info.title}} - 
+                        {% if submission.turned_in %}
+                            {% if submission.complete %}
+                                Complete
+                            {% else %}
+                                Incomplete
+                            {% endif %}
+                        {% else %}
+                            Out
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm">
+            <form action="/add_interaction/{{enrolled.id}}" method="POST">
+                {{ form.hidden_tag() }}
+                {% for field in form if 
+                    field.widget.input_type != 'hidden' %}
+                {{ field(placeholder=field.label.text, 
+                    class="form-control") }}
+                {% endfor %}
+                <button class="btn btn-primary">ADD</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p>
+    <h1 class="display-3 text-center">
+        General Secretary Page
+    </h1><br><br>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            
+            <form action="/add_course" method="post">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="">
+                            Course Title: 
+                        </span>
+                    </div>
+                    <input 
+                    type="text" 
+                    class="form-control" >
+                    <input type="submit" value="Add Course" class="btn btn-success">
+                </div>
+            </form>
+        </div>  
+    </div>
+</p>
+<p>
+    
+</p> 
+
+{% endblock %}

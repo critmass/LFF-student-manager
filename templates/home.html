@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<h1 class="display-2">
+    Sign up for a course
+</h1>
+<div>
+    {% for course in courses %}
+    {% if not course in g.user.courses %}
+        <p>
+            <a href="/add_course/{{course.id}}" 
+            class="btn btn-primary">
+                {{course.title}}
+            </a>
+            
+        </p>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
