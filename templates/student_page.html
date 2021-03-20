@@ -39,17 +39,21 @@
             <div class="overflow-scroll">
                 <ul>
                     {% for assignment in enrolled.assignments %}
-                    <li>
+                    <li id="assignment{{ assignment.id }}">
                         Assignment {{assignment.lesson_info.num}}:
                         {{assignment.lesson_info.title}} - 
                         {% if assignment.turned_in %}
+                        <span complete='{{ assignment.complete }}'>
                             {% if assignment.complete %}
                                 Complete
                             {% else %}
                                 Incomplete
                             {% endif %}
+                        </span>
                         {% else %}
+                        <span>
                             Out
+                        </span>
                         {% endif %}
                     </li>
                     {% endfor %}
@@ -69,4 +73,6 @@
         </div>
     </div>
 </div>
+
+
 {% endblock %}
