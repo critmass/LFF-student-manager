@@ -218,7 +218,7 @@ class Enrollment(db.Model):
     teaching_assistant_id = db.Column(
         db.Integer,
         db.ForeignKey('teaching_assistants.id'),
-        nullable=False
+        nullable=True
     )
 
     teaching_assistant = db.relationship(
@@ -231,6 +231,7 @@ class Enrollment(db.Model):
         db.ForeignKey('courses.id', ondelete='CASCADE'),
         nullable=False
     )
+
     course = db.relationship(
         "Course",
         backref='students_enrolled'

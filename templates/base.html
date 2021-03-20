@@ -41,92 +41,36 @@
                 <li>
                     <a class='nav-item nav-link' href="/">HOME</a>
                 </li>
-                <li>
-                    {% if g.user.enrollments %}
-                        <div class="dropdown">
-                            <button 
-                            class="btn btn-dark dropdown-toggle" 
-                            type="button" 
-                            id="class_drop_down_button" 
-                            data-toggle="dropdown" 
-                            aria-haspopup="true" 
-                            aria-expanded="false">
-                                Classes
-                            </button>
-                            <div 
-                            class="dropdown-menu" 
-                            aria-labelledby="class_drop_down_button">
-                                {% for enrollment in g.user.enrollments %}
-                                <a 
-                                href="/student_page/{{enrollment.course.id}}" 
-                                class="nav-item nav-link">
-                                    {{enrollment.course.title}}
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </li>
-                <li>
-                    {% if g.user.teach_assisting %}
-                        <div class="dropdown">
-                            <button 
-                            class="btn btn-dark dropdown-toggle" 
-                            type="button" 
-                            id="ta_drop_down_button" 
-                            data-toggle="dropdown" 
-                            aria-haspopup="true" 
-                            aria-expanded="false">
-                                TA: Classes
-                            </button>
-                            <div 
-                            class="dropdown-menu" 
-                            aria-labelledby="ta_drop_down_button">
-                                {% for teaching in g.user.teach_assisting %}
-                                
-                                    <a 
-                                    href="/ta_page/{{teaching.course.id}}" 
-                                    class="nav-item nav-link">
-                                        TA:{{teaching.course.title}}
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </li>
-                <li>
-                    {% if g.user.secretarying %}
-                        <div class="btn-group">
-                            <a 
-                            type="button" 
-                            class="btn btn-dark"
-                            href="/secretary">
+                
+                {% for enrollment in g.user.enrollments %}
+                    <li>
+                        <a href="/student_page/{{enrollment.id}}" class="nav-item nav-link">
+                            {{enrollment.course.title}}
+                        </a>
+                    </li>
+                {% endfor %}
+                {% for teaching in g.user.teach_assisting %}
+                    <li>    
+                        <a href="/ta_page/{{teaching.id}}" 
+                        class="nav-item nav-link">
+                            TA:{{teaching.course.title}}
+                        </a>
+                    </li>
+                {% endfor %}
+                {% for secretarying in g.user.secretarying %}
+                    <li>
+                        {% if secretarying.course %}
+                            <a href="/secretary/{{secretarying.id}}" 
+                            class="nav-item nav-link">
+                                Secretary: {{secretarying.course.title}}    
+                            </a>
+                        {% else %}
+                            <a href="/secretary" class="nav-item nav-link">
                                 Secretary
                             </a>
-                            <button 
-                            type="button" 
-                            class="btn btn-dark dropdown-toggle dropdown-toggle-split" 
-                            data-toggle="dropdown" 
-                            aria-haspopup="true" 
-                            aria-expanded="false">
-                                <span class="sr-only">
-                                    Toggle Dropdown
-                                </span>
-                            </button>
-                            <div class="dropdown-menu">
-                                {% for secretarying in g.user.secretarying %}
-                                {% if secretarying.course %}
-                                    <a 
-                                    href="/ta_page/{{secretarying.course.id}}" 
-                                    class="nav-item nav-link">
-                                        TA:{{secretarying.course.title}}
-                                    </a>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </li>
+                        {% endif %}
+                    </li>
+                {% endfor %}
                   
             </ul>
         </div>

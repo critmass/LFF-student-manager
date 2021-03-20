@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, SelectField
+from wtforms import IntegerField, StringField, \
+    PasswordField, TextAreaField, SelectField, DateField
 from wtforms.validators import DataRequired, Email, Length
 
 
@@ -7,6 +8,14 @@ class InteractionsForm(FlaskForm):
     """Form for adding Interactions."""
 
     text = TextAreaField('text', validators=[DataRequired()])
+
+
+class LessonForm(FlaskForm):
+    """Form for adding assignments."""
+
+    title = StringField('Lesson Title', validators=[DataRequired()])
+    num = IntegerField('Number', validators=[DataRequired()])
+    date_due = DateField('Date Due', validators=[DataRequired()])
 
 
 class UserAddForm(FlaskForm):

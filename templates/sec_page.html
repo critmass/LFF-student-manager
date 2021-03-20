@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+General Secretary Page
+{% endblock %}
+
 {% block content %}
 <p>
     <h1 class="display-3 text-center">
@@ -11,13 +15,14 @@
             <form action="/add_course" method="post">
                 <div class="input-group input-group-lg">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="">
+                        <span class="input-group-text">
                             Course Title: 
                         </span>
                     </div>
-                    <input 
-                    type="text" 
-                    class="form-control" >
+                    <input type="text" 
+                    class="form-control" 
+                    id="course_title"
+                    name="course_title">
                     <input type="submit" value="Add Course" class="btn btn-success">
                 </div>
             </form>
@@ -25,7 +30,18 @@
     </div>
 </p>
 <p>
-    
+    <h1 class="display-3 text-center">
+        Add as a secretary for a course
+    </h1>
+    <div class="text-center">
+        {% for course in courses %}
+            <span>
+                <a href="/secretary/add/{{course.id}}" class="btn btn-primary">
+                    {{course.title}}
+                </a>
+            </span>
+        {% endfor %}
+    </div>
 </p> 
 
 {% endblock %}

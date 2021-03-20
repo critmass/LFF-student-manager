@@ -7,10 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 from random import randrange
 
-from forms import UserAddForm, LoginForm, InteractionsForm
+from forms import UserAddForm, LoginForm, InteractionsForm, LessonForm
 from models import\
      db, connect_db, Interaction, User, Enrollment, BibleVerse,\
-          TeachingAssistant, Course, Assignment, Lesson
+          TeachingAssistant, Course, Assignment, Lesson, Secretary
 
 
 CURR_USER_KEY = "curr_user"
@@ -34,11 +34,53 @@ connect_db(app)
 db.create_all()
 
 ##############################################################################
+# helper functions
+
+def valid_courses( data_set ):
+    """This is a helper function for getting courses"""
+
+    courses = []
+    all_courses = Course.query.all()
+
+    enrolled_courses = [ data.course for data in data_set ]
+
+    for course in all_courses:
+        if not (course in enrolled_courses):
+
+            courses.append(course)
+
+    return courses
+
+def add_assignments( enrollmentID ):
+    """This is a helper function that adds all the assignments to an enrolled student"""
+
+    enroll = Enrollment.query.get( enrollmentID )
+
+    lessons = Lesson.query.filter( Lesson.course_id == enroll.course.id )
+
+    assigned_lessons = [ assigned.lesson for assigned in enroll.assignemnts]
+
+    for lesson in lessons:
+
+        if not lesson in assigned_lessons:
+
+            assignment = Assignment(
+                student_enrollment_id = enrollmentID,
+                lesson_id = lesson.id,
+                complete = False,
+                turned_in = False
+            )
+
+            db.session.add( assignment )
+            db.session.commit()
+
+
+##############################################################################
 # User signup/login/logout
 # pulled from warbler project
 
 @app.before_request
-def add_user_to_g():
+def add_to_g():
     """If we're logged in, add curr user to Flask global.
     Either way, add a bible verse"""
 
@@ -147,7 +189,7 @@ def logout():
     return redirect("/login")
 
 ##############################################################################
-# General user routes:
+# Adder routes:
 
 
 @app.route('/add_interaction/<enrollmentID>', methods=['POST'])
@@ -168,21 +210,34 @@ def add_interaction(enrollmentID):
 
     return redirect(f"/student_page/{ enrollmentID }")
 
+@app.route('/add_course', methods=['POST'])
+def add_course():
 
-@app.route('/add_course/<courseID>' )
-def add_course(courseID):
+    course_title = request.form.get( "course_title" )
+    
+    course = Course( title = course_title )
+
+    db.session.add( course )
+    db.session.commit()
+
+    return redirect("/secretary")
+
+@app.route('/enroll_course/<courseID>' )
+def enroll_course(courseID):
 
     course = Course.query.get_or_404( courseID )
 
-    if not (course in g.user.courses_enrolled_in):
+    if not (course in [ enrolled.course for enrolled in g.user.enrollments ]):
 
         enroll = Enrollment(
-            student_id = g.user.id,
+            user_id = g.user.id,
             course_id = courseID
         )
 
         db.session.add( enroll )
         db.session.commit()
+
+        add_assignments( enroll.id )
 
         flash(f"Successfully enrolled in { course.title }")
     
@@ -197,7 +252,7 @@ def add_ta_to_course(courseID):
 
     course = Course.query.get_or_404( courseID )
 
-    if not (course in g.user.courses_teach_assisting):
+    if not (course in [ teaches.course for teaches in g.user.teaching_assistants ]):
 
         teach = Teaches(
             teaching_assistant_id = g.user.id,
@@ -220,7 +275,7 @@ def add_secretary_to_course(courseID):
 
     course = Course.query.get_or_404( courseID )
 
-    if not (course in g.user.courses_teach_assisting):
+    if not (course in [ secretarying.course for secretarying in g.user.secretarying ]):
 
         secretary = Secretary(
             user_id = g.user.id,
@@ -237,7 +292,42 @@ def add_secretary_to_course(courseID):
 
     return redirect("/secretary")
     
+@app.route('/add_lesson/<courseID>', methods=["POST"])
+def add_lesson_to_course( courseID ):
+    """Adds a lesson to a course"""
 
+    form = request.form
+    course = Course.query.get( courseID )
+
+    try:
+        lesson = Lesson(
+            course_id = courseID,
+            title=form.get("title"),
+            num=form.get("num"),
+            date_due=form.get("date_due")
+        )
+
+        db.session.add(lesson)
+        db.session.commit()
+
+        for student in course.students_enrolled:
+
+            assignment = Assignment(
+                student_enrollment_id = student.id,
+                lesson_id  = lesson.id,
+                complete = False,
+                turned_in = False
+            )
+
+            db.session.add( assignment )
+            db.session.commit()
+
+        flash("Successfully added lesson")
+
+    except:
+        flash("Failed to add lesson")
+
+    return redirect("/")
 
 ##############################################################################
 # Homepage and error pages
@@ -248,8 +338,10 @@ def homepage():
     """Show homepage"""
 
     if g.user:
-        courses = Course.query.all()
-        return render_template('home.html', courses=courses)
+        
+        return render_template(
+            'home.html', 
+            courses=valid_courses( g.user.enrollments ))
 
     else:
         return redirect("/login")
@@ -271,24 +363,22 @@ def student_enrollment_page(enrollmentID):
     form = InteractionsForm()
 
     if student_enrollment:
-        return render_template("student_page.html", enrolled = student_enrollment, form=form)
+        return render_template(
+            "student_page.html", enrolled = student_enrollment, form=form)
     else:
         return redirect("/error404")
 
 
 @app.route('/ta_page/<taID>')
-def teaching_assistant_page(courseID):
+def teaching_assistant_page(taID):
     """Show TA's student management page"""
 
-    course = Course.query.get_or_404( courseID )
+    teach_assisting = TeachingAssistant.query.get_or_404( taID )
     
-    if course in g.user.courses_teach_assisting:
+    if teach_assisting in g.user.teach_assisting:
 
-        roll = Enrollment.query.filter( 
-            Enrollment.teaching_assistant_id == g.user.id).filter(
-            courseID == Enrollment.course_id).all()
-
-        return render_template("ta_page.html", current_course = course, roll = roll)
+        return render_template(
+            "ta_page.html", teach_assisting = teach_assisting )
 
     else:
         return redirect("/error404")
@@ -300,9 +390,30 @@ def general_secretary_page():
 
     if g.user.secretarying:
 
-        return render_template("sec_page.html")
+        return render_template(
+            "sec_page.html", 
+            courses=valid_courses( g.user.secretarying ))
     
     else:
 
         return redirect("/error404")
+
+
+@app.route('/secretary/<secretaryID>')
+def course_secretary_page(secretaryID):
+    """Show general secretary page"""
+
+    secretary = Secretary.query.get_or_404( secretaryID )
+
+    if secretary.course:
+
+        return render_template(
+            "sec_course_page.html", 
+            secretary = secretary,
+            form = LessonForm()
+            )
+    
+    else:
+
+        return redirect("/secretary")
 

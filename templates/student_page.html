@@ -4,13 +4,13 @@
     <div class="row">
         <div class="col-sm">
             <h1 class="display-4">
-                {{enrolled.student.first_name}} {{enrolled.student.last_name}}
+                {{enrolled.user.first_name}} {{enrolled.user.last_name}}
             </h1>
-            <h2 class="h1">
-                Student Page
+            <h2 class="h3">
+                Student Page for {{enrolled.course.title}}
             </h2>
-            Email: {{enrolled.student.email}}<br>
-            Phone: {{enrolled.student.phone}}
+            Email: {{enrolled.user.email}}<br>
+            Phone: {{enrolled.user.phone}}
         </div>
         <div class="col-sm">
             Interactions:
@@ -33,12 +33,12 @@
             Assignments:
             <div class="overflow-scroll">
                 <ul>
-                    {% for submission in enrolled.submissions %}
+                    {% for assignment in enrolled.assignments %}
                     <li>
-                        Assignment {{submission.assignment_info.num}}:
-                        {{submission.assignment_info.title}} - 
-                        {% if submission.turned_in %}
-                            {% if submission.complete %}
+                        Assignment {{assignment.lesson_info.num}}:
+                        {{assignment.lesson_info.title}} - 
+                        {% if assignment.turned_in %}
+                            {% if assignment.complete %}
                                 Complete
                             {% else %}
                                 Incomplete

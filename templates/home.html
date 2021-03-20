@@ -5,20 +5,16 @@ Home
 {% endblock %}
 
 {% block content %}
-<h1 class="display-2">
+<h1 class="display-2 text-center">
     Sign up for a course
-</h1>
-<div>
+</h1><br><br><br>
+<div class="text-center">
     {% for course in courses %}
-    {% if not course in g.user.courses %}
-        <p>
-            <a href="/add_course/{{course.id}}" 
-            class="btn btn-primary">
+        <span>
+            <a href="/enroll_course/{{course.id}}" class="btn btn-primary">
                 {{course.title}}
             </a>
-            
-        </p>
-    {% endif %}
+        </span>
     {% endfor %}
 </div>
 {% endblock %}
