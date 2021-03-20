@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+
+{% block title %}
+{{enrolled.user.first_name}}'s page for {{enrolled.course.title}}
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row">

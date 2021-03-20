@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+
+{% block title %}
+{{g.user.first_name}}'s TA page for {{teach_assisting.course.title}}
+{% endblock %}
+
 {% block content %}
     <div class="container p-3">
 
