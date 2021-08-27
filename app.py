@@ -11,7 +11,7 @@ from forms import UserAddForm, LoginForm, InteractionsForm, LessonForm
 from models import\
      db, connect_db, Interaction, User, Enrollment, BibleVerse,\
           TeachingAssistant, Course, Assignment, Lesson, Secretary
-
+# from db_access import localDatabase
 
 CURR_USER_KEY = "curr_user"
 
@@ -20,8 +20,7 @@ app = Flask(__name__)
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', \
-        'postgres://postgres:MTasXgD9@localhost/LFF_student_manager')
+    os.environ.get('DATABASE_URL')#, localDatabase)
 )
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -214,7 +213,7 @@ def add_interaction(enrollmentID):
 def add_course():
 
     course_title = request.form.get( "course_title" )
-    
+
     course = Course( title = course_title )
 
     db.session.add( course )
@@ -240,7 +239,7 @@ def enroll_course(courseID):
         add_assignments( enroll.id )
 
         flash(f"Successfully enrolled in { course.title }")
-    
+
     else:
         flash(f"Failed to enroll in { course.title }")
 
@@ -263,7 +262,7 @@ def add_ta_to_course(courseID):
         db.session.commit()
 
         flash(f"Successfully added to { course.title }")
-    
+
     else:
         flash(f"Failed to added to { course.title }")
 
@@ -286,12 +285,12 @@ def add_secretary_to_course(courseID):
         db.session.commit()
 
         flash(f"Successfully added to { course.title }")
-    
+
     else:
         flash(f"Failed to added to { course.title }")
 
     return redirect("/secretary")
-    
+
 @app.route('/add_lesson/<courseID>', methods=["POST"])
 def add_lesson_to_course( courseID ):
     """Adds a lesson to a course"""
@@ -338,9 +337,9 @@ def homepage():
     """Show homepage"""
 
     if g.user:
-        
+
         return render_template(
-            'home.html', 
+            'home.html',
             courses=valid_courses( g.user.enrollments ))
 
     else:
@@ -374,7 +373,7 @@ def teaching_assistant_page(taID):
     """Show TA's student management page"""
 
     teach_assisting = TeachingAssistant.query.get_or_404( taID )
-    
+
     if teach_assisting in g.user.teach_assisting:
 
         return render_template(
@@ -391,9 +390,9 @@ def general_secretary_page():
     if g.user.secretarying:
 
         return render_template(
-            "sec_page.html", 
+            "sec_page.html",
             courses=valid_courses( g.user.secretarying ))
-    
+
     else:
 
         return redirect("/error404")
@@ -408,11 +407,11 @@ def course_secretary_page(secretaryID):
     if secretary.course:
 
         return render_template(
-            "sec_course_page.html", 
+            "sec_course_page.html",
             secretary = secretary,
             form = LessonForm()
             )
-    
+
     else:
 
         return redirect("/secretary")
