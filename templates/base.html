@@ -7,30 +7,36 @@
         {% block title %}
         {% endblock %}
     </title>
-    
+
     <script src="https://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/popper"></script>
     <script src="https://unpkg.com/bootstrap"></script>
-    
+
     <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     <link rel="stylesheet" href="/static/stylesheets/style.css">
+    <link rel="stylesheet" href="/static/icofont/css/icofont.css">
     <link rel="shortcut icon" href="/static/favicon.ico">
 </head>
 <body>
     <div class="jumbotron jumbotron-fluid">
-        <div class="container text-center">
-            <p>
-                {{g.bible_verse[0]}}
-            </p>
-            <span>
-                {{g.bible_verse[1]}}
-            </span>
+        <div class="text-center bible-verse-jumbotron">
+            <img
+                class="img-responsive"
+                src="/static/images/lff-building1.jpg">
+            <div class="bible-content">
+                <p>
+                    {{g.bible_verse[0]}}
+                </p>
+                <span>
+                    {{g.bible_verse[1]}}
+                </span>
+            </div>
         </div>
     </div>
-    <nav class='nav navbar-expand-md navbar-dark bg-dark'>
-        <button 
-        class='navbar-toggler' 
+    <nav class='nav navbar-expand-md navbar-main'>
+        <button
+        class='navbar-toggler'
         data-toggle="collapse"
         data-target='#mainNav'
         type='button'>
@@ -41,7 +47,7 @@
                 <li>
                     <a class='nav-item nav-link' href="/">HOME</a>
                 </li>
-                
+
                 {% for enrollment in g.user.enrollments %}
                     <li>
                         <a href="/student_page/{{enrollment.id}}" class="nav-item nav-link">
@@ -50,8 +56,8 @@
                     </li>
                 {% endfor %}
                 {% for teaching in g.user.teach_assisting %}
-                    <li>    
-                        <a href="/ta_page/{{teaching.id}}" 
+                    <li>
+                        <a href="/ta_page/{{teaching.id}}"
                         class="nav-item nav-link">
                             TA:{{teaching.course.title}}
                         </a>
@@ -60,9 +66,9 @@
                 {% for secretarying in g.user.secretarying %}
                     <li>
                         {% if secretarying.course %}
-                            <a href="/secretary/{{secretarying.id}}" 
+                            <a href="/secretary/{{secretarying.id}}"
                             class="nav-item nav-link">
-                                Secretary: {{secretarying.course.title}}    
+                                Secretary: {{secretarying.course.title}}
                             </a>
                         {% else %}
                             <a href="/secretary" class="nav-item nav-link">
@@ -71,7 +77,7 @@
                         {% endif %}
                     </li>
                 {% endfor %}
-                  
+
             </ul>
         </div>
         <div class="navbar-nav col-auto">
@@ -82,6 +88,21 @@
             {% endif %}
         </div>
     </nav>
+    <div class="bread-crumb">
+        <img
+            src="/static/images/concert-768x199.jpg"
+            class="img-responsive"
+            alt="banner-top"
+            title="banner-top">
+        <div class="bread-crumb">
+            <div class="container">
+                <div class="matter">
+                    {% block bread_crumb %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="messages">
         {% for msg in get_flashed_messages() %}
             <p>
@@ -93,6 +114,6 @@
         {% block content %}
         {% endblock %}
     </div>
-    
+
 </body>
 </html>

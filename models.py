@@ -62,7 +62,7 @@ class User(db.Model):
         nullable=False
     )
 
-    # both class methods were borrowed and modified from the warbler project 
+    # both class methods were borrowed and modified from the warbler project
     @classmethod
     def signup(cls, first_name, last_name, username, password, email, phone):
         """Sign up user.
@@ -79,7 +79,7 @@ class User(db.Model):
             email=email,
             phone=phone,
             password=hashed_pwd
-            
+
         )
 
         db.session.add(user)
@@ -237,7 +237,7 @@ class Enrollment(db.Model):
         backref='students_enrolled'
     )
 
-    
+
 class Interaction(db.Model):
 
     __tablename__="interactions"
@@ -248,7 +248,7 @@ class Interaction(db.Model):
         autoincrement=True
     )
 
-    # this is the person who had the interaction 
+    # this is the person who had the interaction
     poster_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id'),
@@ -257,11 +257,11 @@ class Interaction(db.Model):
 
     poster = db.relationship(
         'User',
-        primaryjoin=(User.id==poster_id), 
+        primaryjoin=(User.id==poster_id),
         backref='interations_made'
         )
 
-    # this is the student that the interaction was with 
+    # this is the student that the interaction was with
     enrollment_id = db.Column(
         db.Integer,
         db.ForeignKey('enrollments.id'),
@@ -272,7 +272,7 @@ class Interaction(db.Model):
         "Enrollment",
         backref="interactions"
     )
-    
+
     time_stamp = db.Column(
         db.DateTime,
         nullable=False,
@@ -303,7 +303,7 @@ class Lesson(db.Model):
     )
 
     course = db.relationship(
-        "Course", 
+        "Course",
         backref='lessons'
     )
 
@@ -343,7 +343,7 @@ class Assignment(db.Model):
         db.ForeignKey('enrollments.id', ondelete="CASCADE"),
         primary_key=True
     )
-    
+
     student = db.relationship(
         "Enrollment",
         backref="assignments"

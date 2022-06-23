@@ -6,25 +6,58 @@
 Log In
 {% endblock %}
 
+{% block bread_crumb %}
+  <h2>log in</h2>
+  <ul class="list-inline">
+    <li>
+      <a href="/">HOME</a>
+    </li>
+    <li>
+      <a href="/login">login now</a>
+    </li>
+  </ul>
+{% endblock %}
+
 {% block content %}
 
-  <div class="row justify-content-md-center">
-    <div class="col-md-7 col-lg-5">
-      <h2 class="join-message">Welcome back.</h2>
 
-      <form method="POST" id="user_form">
-        {{ form.hidden_tag() }}
+  <!-- login start here -->
+  <div class="login">
+    <div class="container">
+      <div class="col-md-12 col-sm-12 col-xs-12 box padd0">
+        <div class="col-md-12 col-sm-12 col-xs-12 bor">
+          <h5>sign in</h5>
+          <hr>
+          <div class="row justify-content-md-center">
+            <div class="col-md-7 col-lg-5">
 
-        {% for field in form if field.widget.input_type != 'hidden' %}
-          {% for error in field.errors %}
-            <span class="text-danger">{{ error }}</span>
-          {% endfor %}
-          {{ field(placeholder=field.label.text, class="form-control") }}
-        {% endfor %}
+              <form method="POST" id="user_form">
+                {{ form.hidden_tag() }}
 
-        <button class="btn btn-primary btn-block btn-lg">Log in</button>
-      </form>
+                {% for field in form if field.widget.input_type != 'hidden' %}
+                  <div class="form-group">
+                    <label>{{field.label.text}}*</label>
+                    {% for error in field.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                    {{ field(placeholder=field.label.text, class="form-control") }}
+                  </div>
+                {% endfor %}
+
+                <button class="btn btn-primary btn-block btn-lg">Log in</button>
+              </form>
+            </div>
+          </div>
+          <div class="donot">
+            Don't have an account? <a href="/signup">Create a New Account</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  <!-- login end here -->
+
+
+
 
 {% endblock %}

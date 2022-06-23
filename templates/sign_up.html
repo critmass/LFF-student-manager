@@ -6,25 +6,53 @@
 Sign Up page
 {% endblock %}
 
+{% block bread_crumb %}
+  <h2>register now</h2>
+  <ul class="list-inline">
+    <li>
+      <a href="/">HOME</a>
+    </li>
+    <li>
+      <a href="/signup">sign-up now</a>
+    </li>
+  </ul>
+{% endblock %}
+
 {% block content %}
+<!-- login start here -->
+<div class="login">
+  <div class="container">
+    <div class="col-md-12 col-sm-12 col-xs-12 box padd0">
+      <div class="col-md-12 col-sm-12 col-xs-12 bor">
+        <h5>sign up</h5>
+        <hr>
+        <div class="row justify-content-md-center">
+          <div class="col-md-7 col-lg-5">
 
-  <div class="row justify-content-md-center">
-    <div class="col-md-7 col-lg-5">
-      <h2 class="join-message">Sign up</h2>
+            <form method="POST" id="user_form">
+              {{ form.hidden_tag() }}
 
-      <form method="POST" id="user_form">
-        {{ form.hidden_tag() }}
+              {% for field in form if field.widget.input_type != 'hidden' %}
+              <div class="form-group">
+                <label>{{field.label.text}}*</label>
+                {% for error in field.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+                {{ field(placeholder=field.label.text, class="form-control") }}
+              </div>
+              {% endfor %}
 
-        {% for field in form if field.widget.input_type != 'hidden' %}
-          {% for error in field.errors %}
-            <span class="text-danger">{{ error }}</span>
-          {% endfor %}
-          {{ field(placeholder=field.label.text, class="form-control") }}
-        {% endfor %}
-
-        <button class="btn btn-primary btn-block btn-lg">Sign Up</button>
-      </form>
+              <button class="btn btn-primary btn-block btn-lg">Sign Up</button>
+            </form>
+          </div>
+        </div>
+        <div class="donot">
+          Have an account? <a href="/login">Log In</a>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+<!-- login end here -->
 
 {% endblock %}

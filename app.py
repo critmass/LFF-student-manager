@@ -11,7 +11,7 @@ from forms import UserAddForm, LoginForm, InteractionsForm, LessonForm
 from models import\
      db, connect_db, Interaction, User, Enrollment, BibleVerse,\
           TeachingAssistant, Course, Assignment, Lesson, Secretary
-# from db_access import localDatabase
+from db_access import localDatabase
 
 CURR_USER_KEY = "curr_user"
 
@@ -20,17 +20,21 @@ app = Flask(__name__)
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL')#, localDatabase)
+    os.environ.get(
+        'DATABASE_URL'
+        , localDatabase
+    )
 )
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-# toolbar = DebugToolbarExtension(app)
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
-db.create_all()
+# db.create_all()
+
 
 ##############################################################################
 # helper functions
@@ -187,9 +191,9 @@ def logout():
 
     return redirect("/login")
 
+
 ##############################################################################
 # Adder routes:
-
 
 @app.route('/add_interaction/<enrollmentID>', methods=['POST'])
 def add_interaction(enrollmentID):
@@ -209,6 +213,7 @@ def add_interaction(enrollmentID):
 
     return redirect(f"/student_page/{ enrollmentID }")
 
+
 @app.route('/add_course', methods=['POST'])
 def add_course():
 
@@ -220,6 +225,7 @@ def add_course():
     db.session.commit()
 
     return redirect("/secretary")
+
 
 @app.route('/enroll_course/<courseID>' )
 def enroll_course(courseID):
@@ -291,6 +297,7 @@ def add_secretary_to_course(courseID):
 
     return redirect("/secretary")
 
+
 @app.route('/add_lesson/<courseID>', methods=["POST"])
 def add_lesson_to_course( courseID ):
     """Adds a lesson to a course"""
@@ -328,9 +335,9 @@ def add_lesson_to_course( courseID ):
 
     return redirect("/")
 
+
 ##############################################################################
 # Homepage and error pages
-
 
 @app.route('/')
 def homepage():
@@ -338,15 +345,14 @@ def homepage():
 
     if g.user:
 
-        return render_template(
-            'home.html',
-            courses=valid_courses( g.user.enrollments ))
+        return redirect('/courses')
 
     else:
         return redirect("/login")
 
-@app.route('/error404')
-def error_404():
+
+@app.errorhandler(404)
+def error_404(error):
 
     return render_template("error_404.html")
 
@@ -416,3 +422,9 @@ def course_secretary_page(secretaryID):
 
         return redirect("/secretary")
 
+@app.route('/courses')
+def display_courses():
+    return render_template(
+        "course_all.html",
+        courses=valid_courses(g.user.enrollments)
+    )

@@ -5,8 +5,48 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="display-1">
-    404: Page not found
-</h1>
-
+    <!-- bread-crumb start here -->
+    <div class="bread-crumb text-center">
+        <img
+            src="/static/images/banner-top.jpg"
+            class="img-responsive"
+            alt="banner-top"
+            title="banner-top">
+        <div class="container">
+            <div class="matter">
+                <h2>error 404</h2>
+                <ul class="list-inline">
+                    <li>
+                        <a href="index.html">HOME</a>
+                    </li>
+                    <li>
+                        <a href="error-404.html">error 404</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- bread-crumb end here -->
+    <!-- error start here -->
+    <div class="error text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2>404</h2>
+                    <h5>PAGE NOT FOUND</h5>
+                    <p>
+                        We're sorry, the page you requested cannot
+                        be found you.<br> You can go back to
+                    </p>
+                    <button
+                        type="button"
+                        onclick="location.href='/'"
+                    >
+                        Back to home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- error end here -->
 {% endblock %}
